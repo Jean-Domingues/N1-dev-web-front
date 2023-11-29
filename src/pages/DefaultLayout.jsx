@@ -12,9 +12,17 @@ import {
   Cog6ToothIcon,
   InboxIcon,
 } from "@heroicons/react/24/solid";
-import { Outlet, Link } from "react-router-dom";
+import { Outlet, Link, Navigate } from "react-router-dom";
+import { useAuthContext } from "../context/auth";
 
 export function DefaultLayout() {
+  const [user] = useAuthContext();
+  console.log("USUARIO", user);
+
+  if (!user) {
+    return <Navigate to="/" />;
+  }
+
   return (
     <div>
       <Card className="h-[100vh] w-full max-w-[15rem] rounded-none bg-[#696D7D] fixed">

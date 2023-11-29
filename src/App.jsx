@@ -7,6 +7,7 @@ import { Employee } from "./pages/Employee";
 import { Rentals } from "./pages/Rentals";
 import { Clients } from "./pages/Clients";
 import { DefaultLayout } from "./pages/DefaultLayout";
+import { AuthProvider } from "./context/auth";
 
 const router = createBrowserRouter([
   {
@@ -43,7 +44,9 @@ const router = createBrowserRouter([
 
 const App = () => {
   return (
-    <RouterProvider router={router}/>
+    <AuthProvider>
+      <RouterProvider router={router}/>
+    </AuthProvider>
   );
 };
 

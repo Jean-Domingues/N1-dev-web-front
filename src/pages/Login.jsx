@@ -1,8 +1,9 @@
 import React from "react";
-
-import { addBasicAuth } from "../Config/axios";
+import { useNavigate } from "react-router-dom";
+import { instance } from "../Config/axios";
 import { Formik, Field, Form, ErrorMessage } from "formik";
 import * as Yup from "yup";
+import {  useAuthContext } from "../context/auth";
 
 const LoginSchema = Yup.object().shape({
   email: Yup.string()
@@ -12,29 +13,34 @@ const LoginSchema = Yup.object().shape({
 });
 
 const Login = () => {
-  async function fetchData(email, senha) {
-    // Exemplo de uso da função helper
-    const authenticatedInstance = addBasicAuth(email, senha);
+  const [user, setUser] = useAuthContext();
+  const navigate = useNavigate();
 
-    // Agora você pode usar a instância autenticada para fazer requisições
-    authenticatedInstance.get('/categories')
-      .then((response) => {
-        console.log(response.data);
+  async function fetchData(email, password) {
+    const tokenUser = `Basic ${btoa(email + ":" + password)}`
+
+    instance.get('/categories', {
+      headers: {
+        'Authorization': tokenUser
+      }
+    }).then(() => {
+        setUser(tokenUser)
+        navigate("/admin")
       })
       .catch((error) => {
-        console.error('Erro na requisição:', error);
+        alert('Usuário não autorizado');
       });
   }
 
   const handleSubmit = async (values) => {
     console.log("Formulário enviado:", values);
-    await fetchData(values.email, values.senha);
+    await fetchData(values.email, values.password);
   };
 
   return (
     <div className="flex items-center justify-center h-screen bg-[#F9F3F3]">
       <div className="bg-white p-8 rounded shadow-md w-96 bg-[#696D7D]">
-        <h2 className="text-2xl font-bold mb-6 text-white">Login</h2>
+        <h2 className="text-2xl font-bold mb-6 text-gray-700">Login</h2>
         <Formik
           initialValues={{ email: "", password: "" }}
           validationSchema={LoginSchema}
@@ -44,7 +50,7 @@ const Login = () => {
             <div className="mb-4">
               <label
                 htmlFor="email"
-                className="block text-white text-sm font-semibold mb-2"
+                className="block text-gray-600 text-sm font-semibold mb-2"
               >
                 Email
               </label>
@@ -64,7 +70,7 @@ const Login = () => {
             <div className="mb-4">
               <label
                 htmlFor="password"
-                className="block text-white text-sm font-semibold mb-2"
+                className="block text-gray-600 text-sm font-semibold mb-2"
               >
                 Senha
               </label>
