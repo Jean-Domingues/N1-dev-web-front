@@ -1,93 +1,35 @@
-<h1 align="center">
-  Vite Template React
-</h1>
+# N1-Desenvolvimento-Web-Front
+### nome / ra
 
-<p align="center">
-  <a href="https://github.com/SafdarJamal/vite-template-react/releases">
-    <img src="https://img.shields.io/github/v/release/SafdarJamal/vite-template-react" alt="GitHub Release (latest by date)" />
-  </a>
-  <a href="https://github.com/SafdarJamal/vite-template-react/blob/main/LICENSE">
-    <img src="https://img.shields.io/github/license/SafdarJamal/vite-template-react" alt="License" />
-  </a>
-</p>
+- Jean Ap Pinto Domingues - 125111362133
+- Gabriel A. Nori - 125111363702
+- Miguel A. Barreto - 125111367764
 
-<p align="center">
-    A <a href="https://vitejs.dev">Vite</a> + <a href="https://react.dev">React</a> starter template.
-</p>
+Título do Projeto: Desenvolvimento de API de Locadora com Java e Spring
 
-![Vite Template React](https://github.com/SafdarJamal/vite-template-react/assets/48409548/4b1eb99e-01b8-4752-91c0-76930e7948c1)
+## Descrição do Projeto:
+Este projeto tem como objetivo criar uma API de locadora de filmes que permitirá aos funcionários gerenciar eficientemente as operações essenciais de uma locadora, como login de funcionários, cadastro de clientes, cadastro de filmes, cadastro de aluguéis e listagem de filmes, clientes e aluguéis. A API será construída utilizando Java e a estrutura do Spring Framework.
 
-## Folder Structure
+### Recursos Principais:
+1. Autenticação de Funcionários:
+   - Implementar um sistema de autenticação seguro para funcionários.
+   - Acesso aos funcionários para realizar operações administrativas.
 
-No configuration or complicated folder structures, just the files you need to build your app:
+2. Cadastro de Clientes:
+   - Permitir o cadastro de clientes, incluindo informações como nome, endereço, número de telefone, e-mail, entre outros.
+   - Validar dados de clientes e garantir a unicidade dos dados de identificação.
 
-```
-vite-template-react
-├── node_modules
-├── public
-│   ├── favicon.svg
-│   └── robots.txt
-└── src
-    ├── App.css
-    ├── App.jsx
-    ├── App.test.jsx
-    ├── index.css
-    ├── index.jsx
-    └── logo.svg
-    └── setupTests.js
-├── .gitignore
-├── index.html
-├── package.json
-├── README.md
-├── vite.config.js
-```
+3. Cadastro de Filmes:
+   - Possibilitar o registro de filmes no catálogo da locadora, incluindo título, gênero, atores principais, etc..
+   - Manter informações detalhadas sobre cada filme.
 
-## Development
+4. Cadastro de Aluguéis:
+   - Permitir a criação de registros de aluguéis, associando clientes a filmes.
+   - Registrar a data de locação e a data prevista para devolução.
+   - Calcular o valor do aluguel com base nas informações do filme e no período de locação.
 
-To get a local copy of the code, clone it using git:
+5. Listagem de Filmes, Clientes e Aluguéis:
+   - Oferecer endpoints para listar todos os filmes disponíveis na locadora.
+   - Disponibilizar endpoints para listar todos os clientes cadastrados.
+   - Permitir a visualização dos aluguéis ativos, incluindo informações sobre o cliente, filme e datas de locação e devolução.
 
-```
-git clone https://github.com/SafdarJamal/vite-template-react.git
-cd vite-template-react
-```
-
-Make it your own:
-
-```
-rm -rf .git && git init && npm init
-git add .
-git commit -m "Initial commit"
-```
-
-Install dependencies:
-
-```
-npm i
-```
-
-Now, you can start a local web server by running:
-
-```
-npm start
-```
-
-And then open http://localhost:3000 to view it in the browser.
-
-#### Available Scripts
-
-In this project, you can run the following scripts:
-
-| Script        | Description                                             |
-| ------------- | ------------------------------------------------------- |
-| npm start     | Runs the app in the development mode.                   |
-| npm test      | Launches the test runner in the interactive watch mode. |
-| npm run build | Builds the app for production to the `dist` folder.     |
-| npm run serve | Serves the production build from the `dist` folder.     |
-
-## Credits
-
-Vite Template React is built and maintained by [Safdar Jamal](https://safdarjamal.github.io).
-
-## License
-
-This project is licensed under the terms of the [MIT license](https://github.com/SafdarJamal/vite-template-react/blob/main/LICENSE).
