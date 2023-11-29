@@ -1,9 +1,9 @@
 import React from "react";
-import { useNavigate } from "react-router-dom";
+import { Navigate, useNavigate } from "react-router-dom";
 import { instance } from "../Config/axios";
 import { Formik, Field, Form, ErrorMessage } from "formik";
 import * as Yup from "yup";
-import {  useAuthContext } from "../context/auth";
+import { getCookie, setCookie } from "../utils/manageCookies";
 
 const LoginSchema = Yup.object().shape({
   email: Yup.string()
@@ -13,8 +13,12 @@ const LoginSchema = Yup.object().shape({
 });
 
 const Login = () => {
-  const [user, setUser] = useAuthContext();
   const navigate = useNavigate();
+  const isAuth = getCookie("userToken");
+
+  if (isAuth) {
+    return <Navigate to="/admin" />;
+  }
 
   async function fetchData(email, password) {
     const tokenUser = `Basic ${btoa(email + ":" + password)}`
@@ -24,16 +28,15 @@ const Login = () => {
         'Authorization': tokenUser
       }
     }).then(() => {
-        setUser(tokenUser)
-        navigate("/admin")
+        setCookie("userToken", tokenUser);
+        navigate("/admin");
       })
-      .catch((error) => {
+      .catch(() => {
         alert('Usuário não autorizado');
       });
   }
 
   const handleSubmit = async (values) => {
-    console.log("Formulário enviado:", values);
     await fetchData(values.email, values.password);
   };
 

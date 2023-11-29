@@ -11,16 +11,20 @@ import {
   UserCircleIcon,
   Cog6ToothIcon,
   InboxIcon,
+  ArrowLeftOnRectangleIcon,
 } from "@heroicons/react/24/solid";
 import { Outlet, Link, Navigate } from "react-router-dom";
-import { useAuthContext } from "../context/auth";
+import { deleteCookie, getCookie } from "../utils/manageCookies";
 
 export function DefaultLayout() {
-  const [user] = useAuthContext();
-  console.log("USUARIO", user);
+  const userToken = getCookie("userToken");
 
-  if (!user) {
+  if (!userToken) {
     return <Navigate to="/" />;
+  }
+
+  function handleLogout() {
+    deleteCookie("userToken");
   }
 
   return (
@@ -72,9 +76,17 @@ export function DefaultLayout() {
               Adicionar Funcionário
             </ListItem>
           </Link>
+          <Link to="/">
+            <ListItem onClick={handleLogout}>
+              <ListItemPrefix>
+                <ArrowLeftOnRectangleIcon className="h-5 w-5" />
+              </ListItemPrefix>
+              Sair
+            </ListItem>
+          </Link>
         </List>
       </Card>
-      <div class="bg-[#F9F3F3] flex-1 ml-[15rem] min-h-[100vh]">
+      <div className="bg-[#F9F3F3] flex-1 ml-[15rem] min-h-[100vh]">
         <Outlet />
       </div>
     </div>

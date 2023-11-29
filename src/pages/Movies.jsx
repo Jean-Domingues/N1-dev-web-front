@@ -4,74 +4,98 @@ import {
   CardBody,
   CardFooter,
   Typography,
-  Button
+  Button,
 } from "@material-tailwind/react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { AddFilmModal } from "../components/Modals/AddFilmModal";
 import { EditInventoryModal } from "../components/Modals/EditInventoryModal";
+import { getCookie } from "../utils/manageCookies";
+import { instance } from "../Config/axios";
 
 export function Movies() {
+  const userToken = getCookie("userToken");
+
   const [inventaryOpen, setInventaryOpen] = useState(false);
   const [addFilmOpen, setAddFilmOpen] = useState(false);
   const [selectedFilm, setSelectedFilm] = useState(null);
+  const [catalogMovies, setCatalogMovies] = useState(null);
 
   const handleInventaryOpen = (film) => {
     setInventaryOpen(!inventaryOpen);
     setSelectedFilm(film);
   };
 
-  const alterInventary = (film) => {
-    alert("Inventário Alterado!");
+  const alterInventary = async (quantity) => {
+    const filmId = selectedFilm?.id;
+    await instance.patch(
+      `movies/${filmId}/inventories`,
+      {
+        quantity,
+      },
+      {
+        headers: {
+          Authorization: userToken,
+        },
+      }
+    );
+
+    alert("Inventário alterado!");
     setInventaryOpen(!inventaryOpen);
   };
 
-  const handleAddFilmOpen = (film) => {
+  const handleAddFilmOpen = () => {
     setAddFilmOpen(!addFilmOpen);
   };
 
-  const addNewFilm = (values) => {
-    alert("Valores: ", values);
-    setInventaryOpen(!inventaryOpen);
+  const addNewFilm = async (values) => {
+    console.log('VALORES', values);
+
+    const quantity = values.quantity;
+    delete values.quantity;
+
+    const result = await instance.post(
+      "movies",
+      { ...values },
+      {
+        headers: {
+          Authorization: userToken,
+        },
+      }
+    );
+
+    await instance.post(
+      `movies/${result.data.id}/inventories`,
+      {
+        quantity,
+      },
+      {
+        headers: {
+          Authorization: userToken,
+        },
+      }
+    );
+
+    await getMovies();
+    setAddFilmOpen(!addFilmOpen);
   };
 
-  const movies = [
-    {
-      id: 1,
-      category: {
-        id: 2,
-        name: "Ação",
-      },
-      title: "Os Vingadores - Ultimato",
-      description:
-        "Lorem ipsum dolor sit amet consectetur adipisicing elit. Quos reprehenderit natus cumque qui odit",
-      imageLink:
-        "https://wp.ufpel.edu.br/empauta/files/2018/05/GuerraInfinitacartaz.jpg",
-    },
-    {
-      id: 1,
-      category: {
-        id: 2,
-        name: "Ação",
-      },
-      title: "Interstellar",
-      description:
-        "Lorem ipsum dolor sit amet consectetur adipisicing elit. Quos reprehenderit natus cumque qui odit",
-      imageLink:
-        "https://m.media-amazon.com/images/I/91vIHsL-zjL._AC_UF894,1000_QL80_.jpg",
-    },
-    {
-      id: 1,
-      category: {
-        id: 2,
-        name: "Comédia",
-      },
-      title: "Homem-Aranha 2",
-      description:
-        "Lorem ipsum dolor sit amet consectetur adipisicing elit. Quos reprehenderit natus cumque qui odit",
-      imageLink:
-        "https://musicart.xboxlive.com/7/34fd4500-0000-0000-0000-000000000002/504/image.jpg?w=1920&h=1080",
-    },
-  ];
+  async function getMovies() {
+    try {
+      const result = await instance.get("/movies", {
+        headers: {
+          Authorization: userToken,
+        },
+      });
+
+      setCatalogMovies(result.data);
+    } catch (error) {
+      alert("Erro ao buscar filmes");
+    }
+  }
+
+  useEffect(() => {
+    getMovies();
+  }, []);
 
   return (
     <div className="grid grid-cols-2 gap-6 px-20 py-8">
@@ -95,8 +119,8 @@ export function Movies() {
         selectedFilm={selectedFilm}
       />
 
-      {movies.map((item) => (
-        <Card className="mt-6 w-96">
+      {catalogMovies?.map((item) => (
+        <Card className="mt-6 w-96" key={item.id}>
           <CardHeader color="blue-gray" className="relative h-80">
             <img src={item.imageLink} alt="card-image" className="max-h-fit" />
           </CardHeader>

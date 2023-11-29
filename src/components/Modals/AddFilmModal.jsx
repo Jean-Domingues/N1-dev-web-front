@@ -15,20 +15,27 @@ import {
 import { Formik } from "formik";
 
 export function AddFilmModal({ open, handleConfirm, handleOpen }) {
+
   return (
     <Dialog open={open} handler={handleOpen}>
       <DialogHeader>Adicionar Filme</DialogHeader>
-      <DialogBody>
+      <DialogBody className="overflow-y-auto h-96">
         <Card color="transparent" shadow={false} className="px-10">
           <Formik
             initialValues={{
               title: "",
               description: "",
-              categoryId: "3",
+              categoryId: "",
               imageLink: "",
+              quantity: 1
             }}
             onSubmit={(values) => {
-              alert(JSON.stringify(values, null, 2));
+              values.genre = "genre";
+              values.ageRating = "16";
+              values.director = "none";
+
+              handleConfirm(values);
+              alert("Filme adicionado!");
             }}
           >
             {({ values, handleChange, handleBlur, handleSubmit, setFieldValue }) => (
@@ -62,17 +69,17 @@ export function AddFilmModal({ open, handleConfirm, handleOpen }) {
                   <Select
                     label="Selecione uma categoria"
                     name="categoryId"
-                    onChange={(item) => setFieldValue('categoryId', item.value)}
+                    onChange={(event) => setFieldValue('categoryId', event)}
                     onBlur={handleBlur}
                     value={values.categoryId}
                   >
                     <Option value="1">Comédia</Option>
                     <Option value="2">Terror</Option>
-                    <Option value="3">Ação</Option>
-                    <Option value="4">Suspense</Option>
-                    <Option value="5">Drama</Option>
-                    <Option value="6">Documentário</Option>
-                    <Option value="7">Romance</Option>
+                    <Option value="3">Drama</Option>
+                    <Option value="4">Documentário</Option>
+                    <Option value="5">Romance</Option>
+                    <Option value="6">Ação</Option>
+                    <Option value="7">Suspense</Option>
                   </Select>
                   <Typography variant="h6" color="blue-gray" className="-mb-3">
                     Link para imagem
@@ -85,6 +92,18 @@ export function AddFilmModal({ open, handleConfirm, handleOpen }) {
                     onChange={handleChange}
                     onBlur={handleBlur}
                     value={values.imageLink}
+                  />
+                  <Typography variant="h6" color="blue-gray" className="-mb-3">
+                    Quantidade no estoque
+                  </Typography>
+                  <Input
+                    size="lg"
+                    placeholder="quantidade"
+                    className=" !border-t-blue-gray-200 focus:!border-t-gray-900"
+                    name="quantity"
+                    onChange={handleChange}
+                    onBlur={handleBlur}
+                    value={values.quantity}
                   />
                 </div>
                 <Button className="mt-6" fullWidth type="submit">
