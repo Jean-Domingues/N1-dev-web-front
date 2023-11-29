@@ -1,6 +1,8 @@
 import { Card, Typography } from "@material-tailwind/react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { AddClientModal } from "../components/Modals/AddClientModal";
+import { getCookie } from "../utils/manageCookies";
+import { instance } from "../Config/axios";
 
 const TABLE_HEAD = ["Nome", "Email", "Telefone", "Criado em"];
 
@@ -53,16 +55,50 @@ const TABLE_ROWS = [
 ];
 
 export function Clients() {
+  const userToken = getCookie("userToken");
+
   const [clientAddOpen, setClientAddOpen] = useState(false);
+  const [clients, setClients] = useState(null);
 
   const handleClientAddOpen = () => {
     setClientAddOpen(!clientAddOpen);
   };
 
-  const addNewClient = () => {
-    alert("Inventário Alterado!");
-    setClientAddOpen(!clientAddOpen);
+  async function getClients() {
+    try {
+      const result = await instance.get("/customers", {
+        headers: {
+          Authorization: userToken,
+        },
+      });
+
+      setClients(result.data);
+    } catch (error) {
+      alert("Erro ao buscar clientes");
+    }
+  }
+
+  const addNewClient = async (values) => {
+    await instance.post(
+      `customers`,
+      {
+        ...values,
+      },
+      {
+        headers: {
+          Authorization: userToken,
+        },
+      }
+    );
+
+    alert("Cliente cadastrado!");
+    getClients();
+    handleClientAddOpen();
   };
+
+  useEffect(() => {
+    getClients();
+  }, []);
 
   function formatData(date) {
     const data = new Date(date);
@@ -90,7 +126,7 @@ export function Clients() {
       />
 
       <div className="py-5 px-20 h-[80%] w-[80%] bg-[#fefefe] rounded-lg">
-        <Typography variant="h1" className="mb-2">
+        <Typography variant="h1" className="mb-12">
           Clientes
         </Typography>
         <Card className="w-full max-h-[80%] overflow-scroll">
@@ -114,7 +150,7 @@ export function Clients() {
               </tr>
             </thead>
             <tbody>
-              {TABLE_ROWS.map(
+              {clients?.map(
                 ({ firstName, lastName, email, phone, createdAt }, index) => (
                   <tr key={firstName} className="even:bg-blue-gray-50/50">
                     <td className="p-4">

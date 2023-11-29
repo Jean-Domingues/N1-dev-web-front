@@ -6,9 +6,20 @@ import {
   DialogFooter,
   DialogHeader,
   DialogBody,
-  Input
+  Input,
 } from "@material-tailwind/react";
-import { Formik } from "formik";
+import { Formik, ErrorMessage } from "formik";
+
+import * as Yup from "yup";
+
+const formValidation = Yup.object().shape({
+  firstName: Yup.string().required('O campo  "Nome" é obrigatório'),
+  lastName: Yup.string().required('O campo "Sobreome" é obrigatório'),
+  email: Yup.string()
+    .email("Insira um endereço de e-mail válido")
+    .required('O campo "E-mail" é obrigatório'),
+  phone: Yup.string().required('O campo "Telefone" é obrigatório'),
+});
 
 export function AddClientModal({ open, handleConfirm, handleOpen }) {
   return (
@@ -23,11 +34,18 @@ export function AddClientModal({ open, handleConfirm, handleOpen }) {
               email: "",
               phone: "",
             }}
+            validationSchema={formValidation}
             onSubmit={(values) => {
-              alert(JSON.stringify(values, null, 2));
+              handleConfirm(values);
             }}
           >
-            {({ values, handleChange, handleBlur, handleSubmit, setFieldValue }) => (
+            {({
+              values,
+              handleChange,
+              handleBlur,
+              handleSubmit,
+              setFieldValue,
+            }) => (
               <form onSubmit={handleSubmit}>
                 <div className="mb-1 flex flex-col gap-4">
                   <Typography variant="h6" color="blue-gray" className="-mb-3">
@@ -42,6 +60,11 @@ export function AddClientModal({ open, handleConfirm, handleOpen }) {
                     onBlur={handleBlur}
                     value={values.firstName}
                   />
+                  <ErrorMessage
+                    name="firstName"
+                    component="div"
+                    className="text-red-500 text-sm"
+                  />
                   <Typography variant="h6" color="blue-gray" className="-mb-3">
                     Sobrenome
                   </Typography>
@@ -53,6 +76,11 @@ export function AddClientModal({ open, handleConfirm, handleOpen }) {
                     onChange={handleChange}
                     onBlur={handleBlur}
                     value={values.lastName}
+                  />
+                  <ErrorMessage
+                    name="lastName"
+                    component="div"
+                    className="text-red-500 text-sm"
                   />
                   <Typography variant="h6" color="blue-gray" className="-mb-3">
                     Email
@@ -66,6 +94,11 @@ export function AddClientModal({ open, handleConfirm, handleOpen }) {
                     onBlur={handleBlur}
                     value={values.email}
                   />
+                  <ErrorMessage
+                    name="email"
+                    component="div"
+                    className="text-red-500 text-sm"
+                  />
                   <Typography variant="h6" color="blue-gray" className="-mb-3">
                     Telefone
                   </Typography>
@@ -77,6 +110,11 @@ export function AddClientModal({ open, handleConfirm, handleOpen }) {
                     onChange={handleChange}
                     onBlur={handleBlur}
                     value={values.phone}
+                  />
+                  <ErrorMessage
+                    name="phone"
+                    component="div"
+                    className="text-red-500 text-sm"
                   />
                 </div>
                 <Button className="mt-6" fullWidth type="submit">
