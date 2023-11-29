@@ -20,9 +20,25 @@ import { getCookie } from "../../utils/manageCookies";
 const modalValidation = Yup.object().shape({
   movieId: Yup.string().required("O campo de Filme é obrigatório"),
   customerId: Yup.string().required("O campo de Cliente é obrigatório"),
-  dueDate: Yup.string().required(
-    "O campo  de Data para devolução é obrigatório"
-  ),
+  dueDate: Yup.date()
+    .nullable()
+    .required("O campo de data é obrigatório")
+    .min(new Date(), 'A data deve ser maior que o dia de hoje')
+    .test(
+      "is-valid-date",
+      "A data deve ser inferior a 15 dias a partir de hoje",
+      function (value) {
+
+        if (!value) {
+          return false;
+        }
+        const currentDate = new Date();
+        const maxDate = new Date();
+        maxDate.setDate(currentDate.getDate() + 15);
+
+        return value < maxDate;
+      }
+    ),
   quantity: Yup.number()
     .min(1, "A quantidade deve ser no mínimo 1")
     .required('O campo "Quantidade" é obrigatório'),
@@ -95,7 +111,7 @@ export function AddNewRental({ open, handleConfirm, handleOpen }) {
                     onBlur={handleBlur}
                     value={values.movieId}
                   >
-                    {movies?.map(item => (
+                    {movies?.map((item) => (
                       <Option value={item.id}>{item.title}</Option>
                     ))}
                   </Select>
@@ -114,8 +130,10 @@ export function AddNewRental({ open, handleConfirm, handleOpen }) {
                     onBlur={handleBlur}
                     value={values.customerId}
                   >
-                    {clients?.map(item => (
-                      <Option value={item.id}>{item.firstName + " " + item.lastName}</Option>
+                    {clients?.map((item) => (
+                      <Option value={item.id}>
+                        {item.firstName + " " + item.lastName}
+                      </Option>
                     ))}
                   </Select>
                   <ErrorMessage
