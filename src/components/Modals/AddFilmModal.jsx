@@ -1,6 +1,5 @@
 import {
   Card,
-  Checkbox,
   Button,
   Typography,
   Dialog,
@@ -12,10 +11,21 @@ import {
   Select,
   Option,
 } from "@material-tailwind/react";
-import { Formik } from "formik";
+import { Formik, ErrorMessage } from "formik";
+
+import * as Yup from "yup";
+
+const modalValidation = Yup.object().shape({
+  title: Yup.string().required("O campo título é obrigatório"),
+  description: Yup.string().required("O campo descrição é obrigatório"),
+  categoryId: Yup.string().required("O campo categoria é obrigatório"),
+  imageLink: Yup.string().required("O campo link da imagem é obrigatório"),
+  quantity: Yup.number()
+    .min(1, "A quantidade deve ser no mínimo 1")
+    .required("O campo quantidade é obrigatório"),
+});
 
 export function AddFilmModal({ open, handleConfirm, handleOpen }) {
-
   return (
     <Dialog open={open} handler={handleOpen}>
       <DialogHeader>Adicionar Filme</DialogHeader>
@@ -27,8 +37,9 @@ export function AddFilmModal({ open, handleConfirm, handleOpen }) {
               description: "",
               categoryId: "",
               imageLink: "",
-              quantity: 1
+              quantity: 1,
             }}
+            validationSchema={modalValidation}
             onSubmit={(values) => {
               values.genre = "genre";
               values.ageRating = "16";
@@ -38,7 +49,13 @@ export function AddFilmModal({ open, handleConfirm, handleOpen }) {
               alert("Filme adicionado!");
             }}
           >
-            {({ values, handleChange, handleBlur, handleSubmit, setFieldValue }) => (
+            {({
+              values,
+              handleChange,
+              handleBlur,
+              handleSubmit,
+              setFieldValue,
+            }) => (
               <form onSubmit={handleSubmit}>
                 <div className="mb-1 flex flex-col gap-4">
                   <Typography variant="h6" color="blue-gray" className="-mb-3">
@@ -53,6 +70,11 @@ export function AddFilmModal({ open, handleConfirm, handleOpen }) {
                     onBlur={handleBlur}
                     value={values.title}
                   />
+                  <ErrorMessage
+                    name="title"
+                    component="div"
+                    className="text-red-500 text-sm"
+                  />
                   <Typography variant="h6" color="blue-gray" className="-mb-3">
                     Descrição
                   </Typography>
@@ -63,13 +85,18 @@ export function AddFilmModal({ open, handleConfirm, handleOpen }) {
                     onBlur={handleBlur}
                     value={values.description}
                   />
+                  <ErrorMessage
+                    name="description"
+                    component="div"
+                    className="text-red-500 text-sm"
+                  />
                   <Typography variant="h6" color="blue-gray" className="-mb-3">
                     Categoria
                   </Typography>
                   <Select
                     label="Selecione uma categoria"
                     name="categoryId"
-                    onChange={(event) => setFieldValue('categoryId', event)}
+                    onChange={(event) => setFieldValue("categoryId", event)}
                     onBlur={handleBlur}
                     value={values.categoryId}
                   >
@@ -81,6 +108,11 @@ export function AddFilmModal({ open, handleConfirm, handleOpen }) {
                     <Option value="6">Ação</Option>
                     <Option value="7">Suspense</Option>
                   </Select>
+                  <ErrorMessage
+                    name="categoryId"
+                    component="div"
+                    className="text-red-500 text-sm"
+                  />
                   <Typography variant="h6" color="blue-gray" className="-mb-3">
                     Link para imagem
                   </Typography>
@@ -93,6 +125,11 @@ export function AddFilmModal({ open, handleConfirm, handleOpen }) {
                     onBlur={handleBlur}
                     value={values.imageLink}
                   />
+                  <ErrorMessage
+                    name="imageLink"
+                    component="div"
+                    className="text-red-500 text-sm"
+                  />
                   <Typography variant="h6" color="blue-gray" className="-mb-3">
                     Quantidade no estoque
                   </Typography>
@@ -104,6 +141,11 @@ export function AddFilmModal({ open, handleConfirm, handleOpen }) {
                     onChange={handleChange}
                     onBlur={handleBlur}
                     value={values.quantity}
+                  />
+                  <ErrorMessage
+                    name="quantity"
+                    component="div"
+                    className="text-red-500 text-sm"
                   />
                 </div>
                 <Button className="mt-6" fullWidth type="submit">
